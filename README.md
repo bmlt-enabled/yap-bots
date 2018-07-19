@@ -28,7 +28,7 @@ static $fbmessenger_verifytoken = '';
 
 Other settings in config.php that will have to be set
 
-* `$yap_api_endpoint`: points to your Yap instance
+* `$yap_url`: points to your Yap instance
 * `$google_maps_api_key`: your google maps api key (do not use referrer restrictions)
 * `$title`: intro message when someone starts a conversation with your bot
 * `*$location_lookup_bias` (optional): set a bias on the google maps api lookup

@@ -42,11 +42,11 @@ function getCoordinatesForAddress($address) {
 
 function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow) {
     return json_decode(get(sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s",
-        $GLOBALS['yap_api_endpoint'],  $latitude, $longitude, $results_count, $today, $tomorrow)));
+        $GLOBALS['yap_url'],  $latitude, $longitude, $results_count, $today, $tomorrow)));
 }
 
 function getServiceBodyCoverage($latitude, $longitude) {
-    return json_decode(get(sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s", $GLOBALS['yap_api_endpoint'],  $latitude, $longitude)));
+    return json_decode(get(sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s", $GLOBALS['yap_url'],  $latitude, $longitude)));
 }
 
 function get($url) {
