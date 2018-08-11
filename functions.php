@@ -46,7 +46,7 @@ function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow) {
 }
 
 function getServiceBodyCoverage($latitude, $longitude) {
-    return json_decode(get(sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s", $GLOBALS['yap_url'],  $latitude, $longitude)));
+    return json_decode(get(sprintf("%s/api/getServiceBodyCoverage.php?latitude=%s&longitude=%s", $GLOBALS['yap_url'],  $latitude, $longitude)));
 }
 
 function get($url) {
