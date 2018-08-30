@@ -49,7 +49,7 @@ include_once 'functions.php';?>
     function addMarker(location, map, content, icon_color) {
         var marker = new google.maps.Marker({
             position: location,
-            icon: "http://maps.google.com/mapfiles/ms/icons/" + icon_color + "-dot.png",
+            icon: "https://maps.google.com/mapfiles/ms/icons/" + icon_color + "-dot.png",
             map: map,
             title: content,
             animation: google.maps.Animation.DROP}); // Marker for users location
