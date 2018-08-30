@@ -33,9 +33,16 @@ include_once 'functions.php';?>
             $data_points = json_decode(base64_decode($_REQUEST['Data']));
             foreach ($data_points as $data_point) {
                 $label = "";
+                $row = 1;
 
                 foreach ($data_point->results as $result) {
-                    $label .= $result . "<br/>";
+                    if ($row == 1) {
+                        $label .= "<b>" . $result . "</b><br/>";
+                    } else {
+                        $label .= $result . "<br/>";
+                    }
+
+                    $row++;
                 }
                 $label .= $data_point->distance . "<br/>";
                 $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
@@ -67,7 +74,7 @@ include_once 'functions.php';?>
     }
 
     function autoZoom(locations, map) {
-        var bounds = new google.maps.LatLngBounds ();
+        var bounds = new google.maps.LatLngBounds();
         for (var i = 0, locations_length = locations.length; i < locations_length; i++) {
             bounds.extend(locations[i]);
         }
