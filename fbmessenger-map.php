@@ -36,6 +36,7 @@ include_once 'functions.php';?>
                     $label .= $result . "<br/>";
                 }
                 $label .= $data_point->distance;
+                $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
                 ?>
                 addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>");
         <?php
