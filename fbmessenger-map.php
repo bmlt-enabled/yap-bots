@@ -47,7 +47,7 @@ include_once 'functions.php';?>
             }
         ?>
 
-        addMarker(mylocation, map, "You Are Here", "blue")
+        addMarker(mylocation, map, "You Are Here", "blue");
         autoZoom(locations, map);
     }
 
@@ -57,7 +57,7 @@ include_once 'functions.php';?>
             icon: "https://maps.google.com/mapfiles/ms/icons/" + icon_color + "-dot.png",
             map: map,
             title: content,
-            animation: google.maps.Animation.DROP}); // Marker for users location
+            animation: google.maps.Animation.DROP});
 
         marker.addListener('click', function() {
             new google.maps.InfoWindow({
@@ -68,9 +68,8 @@ include_once 'functions.php';?>
 
     function autoZoom(locations, map) {
         var bounds = new google.maps.LatLngBounds ();
-        for (var i = 0, LtLgLen = locations.length; i < LtLgLen; i++) {
-            //  And increase the bounds to take this point
-            bounds.extend (locations[i]);
+        for (var i = 0, locations_length = locations.length; i < locations_length; i++) {
+            bounds.extend(locations[i]);
         }
 
         map.fitBounds(bounds);
