@@ -127,33 +127,14 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
 
         error_log($map_page_url);
 
-        //sendMessage($map_page_url, $coordinates, $results_count);
+        sendButton('Follow-up Actions', 'Results Map', $map_page_url, $coordinates, $results_count);
     } else {
         sendMessage("Location not recognized.  I only recognize City, County or Postal Code.");
     }
 }
 
 function sendMessage($message, $coordinates = null, $results_count = 0  ) {
-    $quick_replies_payload = array( ['content_type' => 'location']);
-
-    if (isset($coordinates)) {
-        array_push($quick_replies_payload,
-            ['content_type' => 'text',
-             'title' => '📞 Helpline',
-             'payload' => json_encode([
-                 'coordinates' => $coordinates
-             ])]);
-    }
-
-    if ($results_count > 0) {
-        array_push($quick_replies_payload,
-            ['content_type' => 'text',
-             'title' => 'More Results',
-             'payload' => json_encode([
-                 'results_start' => $results_count + 1,
-                 'coordinates' => $coordinates
-             ])]);
-    }
+    $quick_replies_payload = quickReplies( $coordinates, $results_count );
 
     sendBotResponse([
         'recipient' => ['id' => $GLOBALS['senderId']],
@@ -163,6 +144,59 @@ function sendMessage($message, $coordinates = null, $results_count = 0  ) {
             'quick_replies' => $quick_replies_payload
         ]
     ]);
+}
+
+function sendButton($title, $button_title, $link, $coordinates = null, $results_count = 0  ) {
+    $quick_replies_payload = quickReplies( $coordinates, $results_count );
+
+    sendBotResponse([
+        'recipient' => ['id' => $GLOBALS['senderId']],
+        'messaging_type' => 'RESPONSE',
+        'message' => [
+            'attachment' => [
+                'type' => 'template',
+                'payload' => [
+                    'template_type' => 'button',
+                    'text' => $title,
+                    'buttons' => array([
+                        'type' => 'web_url',
+                        'url' => $link,
+                        'title' => $button_title
+                    ])
+                ]
+            ],
+            'quick_replies' => $quick_replies_payload
+        ]
+    ]);
+}
+
+function quickReplies( $coordinates, $results_count ) {
+    $quick_replies_payload = array( [ 'content_type' => 'location' ] );
+
+    if ( isset( $coordinates ) ) {
+        array_push( $quick_replies_payload,
+            [
+                'content_type' => 'text',
+                'title'        => '📞 Helpline',
+                'payload'      => json_encode( [
+                    'coordinates' => $coordinates
+                ] )
+            ] );
+    }
+
+    if ( $results_count > 0 ) {
+        array_push( $quick_replies_payload,
+            [
+                'content_type' => 'text',
+                'title'        => 'More Results',
+                'payload'      => json_encode( [
+                    'results_start' => $results_count + 1,
+                    'coordinates'   => $coordinates
+                ] )
+            ] );
+    }
+
+    return $quick_replies_payload;
 }
 
 function sendBotResponse($payload) {
