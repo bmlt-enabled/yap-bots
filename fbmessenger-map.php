@@ -38,16 +38,21 @@ include_once 'functions.php';?>
                 $label .= $data_point->distance . "<br/>";
                 $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
                 ?>
-                addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>");
+                addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>", "red");
         <?php
             }
         ?>
 
-        addMarker(mylocation, map, "You Are Here")
+        addMarker(mylocation, map, "You Are Here", "blue")
     }
 
-    function addMarker(location, map, content) {
-        var marker = new google.maps.Marker({position: location, map: map, title: content, animation: google.maps.Animation.DROP}); // Marker for users location
+    function addMarker(location, map, content, icon_color) {
+        var marker = new google.maps.Marker({
+            position: location,
+            icon: "http://maps.google.com/mapfiles/ms/icons/" + icon_color + "-dot.png",
+            map: map,
+            title: content,
+            animation: google.maps.Animation.DROP}); // Marker for users location
 
         marker.addListener('click', function() {
             new google.maps.InfoWindow({
