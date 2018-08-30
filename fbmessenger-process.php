@@ -95,12 +95,13 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
 
         $filtered_list = $meeting_results->filteredList;
         $data = [];
+        $doihavethebmlt = true;
 
         for ($i = $results_start; $i < $results_count; $i++) {
             // Growth hacking
             if ($i == 0) {
                 if (round($filtered_list[$i]->distance_in_miles) >= 100) {
-                    sendMessage("Your community may not be covered by the BMLT yet.  https://www.doihavethebmlt.org/?latitude=" . $coordinates->latitude . "&longitude=" . $coordinates->longitude);
+                    $doihavethebmlt = false;
                 }
             }
 
@@ -129,6 +130,10 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
         error_log($map_page_url);
 
         sendButton('Follow-up Actions', 'Results Map', $map_page_url, $coordinates, $results_count);
+
+        if (!$doihavethebmlt) {
+            sendMessage( "Your community may not be covered by the BMLT yet.  https://www.doihavethebmlt.org/?latitude=" . $coordinates->latitude . "&longitude=" . $coordinates->longitude );
+        }
     } else {
         sendMessage("Location not recognized.  I only recognize City, County or Postal Code.");
     }
