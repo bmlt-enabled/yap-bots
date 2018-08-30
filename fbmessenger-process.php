@@ -94,6 +94,7 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
         }
 
         $filtered_list = $meeting_results->filteredList;
+        $data = [];
 
         for ($i = $results_start; $i < $results_count; $i++) {
             // Growth hacking
@@ -110,7 +111,23 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
             sendMessage($message,
                 $coordinates,
                 $results_count);
+
+            array_push($data, [
+                "latitude" => $filtered_list[$i]->latitude,
+                "longitude" => $filtered_list[$i]->longitude,
+                "results" => $results]);
         }
+
+        $map_page_url = "https://"
+                    .$_SERVER['HTTP_HOST']."/"
+                    .str_replace("process", "map", $_SERVER['PHP_SELF'])
+                    ."?Data=" . base64_encode(json_encode($data))
+                    ."&Latitude=" . $coordinates->latitude
+                    ."&Longitude=" . $coordinates->longitude;
+
+        error_log($map_page_url);
+
+        sendMessage($map_page_url, $coordinates, $results_count);
     } else {
         sendMessage("Location not recognized.  I only recognize City, County or Postal Code.");
     }

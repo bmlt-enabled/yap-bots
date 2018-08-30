@@ -1,12 +1,20 @@
 <?php
 include_once 'config.php';
 static $days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($google_maps_api_key);
+$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($ss_google_maps_api_key);
 
 class Coordinates {
     public $location;
     public $latitude;
     public $longitude;
+}
+
+class DataOutputType {
+    const JSON = "json";
+    const JSONP = "jsonp";
+    const KML = "kml";
+    const CSV = "csv";
+    const POI_CSV = "poi";
 }
 
 function getResultsString($filtered_list) {
@@ -41,8 +49,12 @@ function getCoordinatesForAddress($address) {
 }
 
 function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow) {
-    return json_decode(get(sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s",
-        $GLOBALS['yap_url'],  $latitude, $longitude, $results_count, $today, $tomorrow)));
+    return json_decode(get(getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow)));
+}
+
+function getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow, $format = DataOutputType::JSON) {
+    return sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s&format=%s",
+        $GLOBALS['yap_url'],  $latitude, $longitude, $results_count, $today, $tomorrow, $format);
 }
 
 function getServiceBodyCoverage($latitude, $longitude) {
