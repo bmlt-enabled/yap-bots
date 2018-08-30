@@ -127,7 +127,7 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
 
         error_log($map_page_url);
 
-        sendMessage($map_page_url, $coordinates, $results_count);
+        //sendMessage($map_page_url, $coordinates, $results_count);
     } else {
         sendMessage("Location not recognized.  I only recognize City, County or Postal Code.");
     }
