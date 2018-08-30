@@ -61,7 +61,7 @@ if (isset($messaging['postback']['payload'])
 function sendServiceBodyCoverage($coordinates) {
     $service_body = getServiceBodyCoverage($coordinates->latitude, $coordinates->longitude);
     if ($service_body != null) {
-        sendMessage("Covered by: " . $service_body->name . ", their phone number is: " . explode(",", $service_body->helpline)[0], $coordinates);
+        sendMessage("Covered by: " . $service_body->name . ", their phone number is: " . explode("|", $service_body->helpline)[0], $coordinates);
     } else {
         sendMessage("Cannot find Helpline coverage in the BMLT.  Join the BMLT Facebook Group and ask how to get this working.  https://www.facebook.com/BMLT-656690394722060/", $coordinates);
     }
