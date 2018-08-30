@@ -22,28 +22,33 @@ include_once 'functions.php';?>
 <div id="map"></div>
 <script>
     function initMap() {
-        var mylocation = {lat: <?php echo $_REQUEST['Latitude']?>, lng: <?php echo $_REQUEST['Longitude']?>};                   // passed users location
+        var mylocation = {lat: <?php echo $_REQUEST['Latitude']?>, lng: <?php echo $_REQUEST['Longitude']?>};
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: mylocation,                                                   // Center on users location
-            zoom: 9                                                               // zoom level
+            center: mylocation
         });
+
+        var locations = [];
 
         <?php
             $data_points = json_decode(base64_decode($_REQUEST['Data']));
             foreach ($data_points as $data_point) {
                 $label = "";
+
                 foreach ($data_point->results as $result) {
                     $label .= $result . "<br/>";
                 }
                 $label .= $data_point->distance . "<br/>";
                 $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
                 ?>
+
                 addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>", "red");
+                locations.push(new google.maps.LatLng(<?php echo $data_point->latitude?>, <?php echo $data_point->longitude?>));
         <?php
             }
         ?>
 
         addMarker(mylocation, map, "You Are Here", "blue")
+        autoZoom(locations, map);
     }
 
     function addMarker(location, map, content, icon_color) {
@@ -59,6 +64,16 @@ include_once 'functions.php';?>
                 content: content
             }).open(map, marker);
         });
+    }
+
+    function autoZoom(locations, map) {
+        var bounds = new google.maps.LatLngBounds ();
+        for (var i = 0, LtLgLen = locations.length; i < LtLgLen; i++) {
+            //  And increase the bounds to take this point
+            bounds.extend (locations[i]);
+        }
+
+        map.fitBounds(bounds);
     }
 </script>
 <script async defer
