@@ -115,6 +115,7 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
             array_push($data, [
                 "latitude" => $filtered_list[$i]->latitude,
                 "longitude" => $filtered_list[$i]->longitude,
+                "distance" => $distance_string,
                 "results" => $results]);
         }
 

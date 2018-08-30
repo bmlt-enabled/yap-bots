@@ -35,6 +35,7 @@ include_once 'functions.php';?>
                 foreach ($data_point->results as $result) {
                     $label .= $result . "<br/>";
                 }
+                $label .= $data_point->distance;
                 ?>
                 addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>");
         <?php
