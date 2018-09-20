@@ -18,24 +18,25 @@ class DataOutputType {
 }
 
 function getResultsString($filtered_list) {
-    $additional_info_array = [
-        $filtered_list->location_text,
-        $filtered_list->location_info
-    ];
+    $additional_info_array = [];
 
+    if ($filtered_list->location_text != "") array_push($additional_info_array, $filtered_list->location_text);
+    if ($filtered_list->location_info != "") array_push($additional_info_array, $filtered_list->location_info);
     $additional_info = trim(implode(" / ", $additional_info_array));
 
-    $response = array(
-        str_replace("&", "&amp;", $filtered_list->meeting_name),
-        str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
-                                  . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A')),
-        str_replace("&", "&amp;", $filtered_list->location_street
-                                  . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
-                                  . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
+    $response = [];
+
+    array_push($response, str_replace("&", "&amp;", $filtered_list->meeting_name));
+    array_push($response, str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
+                                  . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A')));
 
     if ($additional_info != null) {
         array_push($response, $additional_info);
     }
+
+    array_push($response, str_replace("&", "&amp;", $filtered_list->location_street
+                                  . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
+                                  . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
 
     return $response;
 }
