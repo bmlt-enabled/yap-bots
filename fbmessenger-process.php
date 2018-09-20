@@ -108,7 +108,7 @@ function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
             $results = getResultsString($filtered_list[$i]);
             $distance_string = "(" . round($filtered_list[$i]->distance_in_miles) . " mi / " . round($filtered_list[$i]->distance_in_km) . " km)";
 
-            $message = $results[0] . "\n" . $results[1] . "\n" . $results[2] . "\n" . $distance_string;
+            $message = implode("\n", $results) . "\n" . $distance_string;
             sendMessage($message,
                 $coordinates,
                 $results_count);
