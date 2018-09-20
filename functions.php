@@ -23,7 +23,7 @@ function getResultsString($filtered_list) {
         $filtered_list->location_info
     ];
 
-    $additional_info = trim(implode(" ", $additional_info_array));
+    $additional_info = trim(implode(" / ", $additional_info_array));
 
     $response = array(
         str_replace("&", "&amp;", $filtered_list->meeting_name),
