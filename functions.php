@@ -25,15 +25,19 @@ function getResultsString($filtered_list) {
 
     $additional_info = trim(implode(" ", $additional_info_array));
 
-    return array(
+    $response = array(
         str_replace("&", "&amp;", $filtered_list->meeting_name),
-        str_replace("&", "&amp;", $additional_info),
         str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
                                   . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A')),
         str_replace("&", "&amp;", $filtered_list->location_street
                                   . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
                                   . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
 
+    if ($additional_info != null) {
+        array_push($response, $additional_info);
+    }
+
+    return $response;
 }
 
 function getCoordinatesForAddress($address) {
