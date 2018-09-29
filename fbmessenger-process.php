@@ -45,7 +45,7 @@ if (isset($messaging['postback']['payload'])
 } elseif (isset($messageText) && strtoupper($messageText) == "THANK YOU") {
     sendMessage( ":)" );
 } elseif (isset($messageText) && strtoupper($messageText) == "JFT") {
-    $result = get("http://www.jftna.org/jft/");
+    $result = get("https://www.jftna.org/jft/");
     $stripped_results = strip_tags($result);
     $without_tabs = str_replace("\t", "", $stripped_results);
     $without_htmlentities = html_entity_decode($without_tabs);
