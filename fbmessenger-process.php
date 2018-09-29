@@ -44,6 +44,13 @@ if (isset($messaging['postback']['payload'])
     }
 } elseif (isset($messageText) && strtoupper($messageText) == "THANK YOU") {
     sendMessage( ":)" );
+} elseif (isset($messageText) && strtoupper($messageText) == "JFT") {
+    $result = get("http://www.jftna.org/jft/");
+    $stripped_results = strip_tags($result);
+    $without_tabs = str_replace("\t", "", $stripped_results);
+    $without_htmlentities = html_entity_decode($without_tabs);
+    $without_extranewlines = preg_replace("/[\r\n]+/", "\n\n", $without_htmlentities);
+    sendMessage( $without_extranewlines );
 } elseif (isset($messageText) && strtoupper($messageText) == "HELP") {
     sendMessage( "To find more information on this messenger app visit https://github.com/radius314/yap.");
 } elseif (isset($messageText) && strtoupper($messageText) == "📞 HELPLINE") {
