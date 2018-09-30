@@ -28,6 +28,14 @@ if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
     sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  You can also send your location, using the button below.  (Note: Distances, unless a precise location, will be estimates.)");
     sendMessage("By default, results for today will show up.  You can adjust this setting using the menu below.");
+} elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
+        && $messaging['postback']['payload'] == "JFT"))) {
+    $result = get("https://www.jftna.org/jft/");
+    $stripped_results = strip_tags($result);
+    $without_tabs = str_replace("\t", "", $stripped_results);
+    $without_htmlentities = html_entity_decode($without_tabs);
+    $without_extranewlines = preg_replace("/[\r\n]+/", "\n\n", $without_htmlentities);
+    sendMessage( $without_extranewlines );
 } elseif (isset($messageText)
           && strtoupper($messageText) == "MORE RESULTS") {
     $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
@@ -44,13 +52,6 @@ if (isset($messaging['postback']['payload'])
     }
 } elseif (isset($messageText) && strtoupper($messageText) == "THANK YOU") {
     sendMessage( ":)" );
-} elseif (isset($messageText) && strtoupper($messageText) == "JFT") {
-    $result = get("https://www.jftna.org/jft/");
-    $stripped_results = strip_tags($result);
-    $without_tabs = str_replace("\t", "", $stripped_results);
-    $without_htmlentities = html_entity_decode($without_tabs);
-    $without_extranewlines = preg_replace("/[\r\n]+/", "\n\n", $without_htmlentities);
-    sendMessage( $without_extranewlines );
 } elseif (isset($messageText) && strtoupper($messageText) == "HELP") {
     sendMessage( "To find more information on this messenger app visit https://github.com/radius314/yap.");
 } elseif (isset($messageText) && strtoupper($messageText) == "📞 HELPLINE") {
