@@ -1,6 +1,7 @@
 <?php
 static $title = "";
-static $google_maps_api_key = "";
+static $cs_google_maps_api_key = "";
+static $ss_google_maps_api_key = "";
 static $yap_url = "";
 static $location_lookup_bias = "country:us";
 static $fbmessenger_accesstoken = "";
