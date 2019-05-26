@@ -1,4 +1,6 @@
-# yap-fbmessenger-bot
+# yap-bots
+
+## facebook messenger
 
 **Your instance will have to have HTTPS/SSL enabled.  You will also need redis running locally.**
 
@@ -36,3 +38,6 @@ Other settings in config.php that will have to be set
 * `$result_count_max` (optional): set the max results to return on a lookup (default is 10).
 
 Note: If you decide to change the `$title` in your config.php, you will have to force a refresh on your Facebook Messenger settings by calling `http://your-yap-server/fbmessenger-activate.php` again.  After this is done, it may take some time for Facebook to show these changes.
+
+## whatsapp
+
