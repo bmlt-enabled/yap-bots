@@ -1,7 +1,8 @@
 <?php
 include_once 'config.php';
 static $days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($ss_google_maps_api_key);
+$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($google_maps_api_key);
+$timezone_lookup_endpoint = "https://maps.googleapis.com/maps/api/timezone/json?key=" . trim($google_maps_api_key);
 
 class Coordinates {
     public $location;
@@ -39,6 +40,56 @@ function getResultsString($filtered_list) {
                                   . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
 
     return $response;
+}
+
+function getTimeZoneForCoordinates($latitude, $longitude)
+{
+    $time_zone = get($GLOBALS['timezone_lookup_endpoint'] . "&location=" . $latitude . "," . $longitude . "&timestamp=" . time());
+    return json_decode($time_zone);
+}
+
+function setTimeZoneForLatitudeAndLongitude($latitude, $longitude)
+{
+    $time_zone_results = getTimeZoneForCoordinates($latitude, $longitude);
+    date_default_timezone_set($time_zone_results->timeZoneId);
+}
+
+function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
+    setTimeZoneForLatitudeAndLongitude($coordinates->latitude, $coordinates->longitude);
+    try {
+        $results_count = (isset($GLOBALS['result_count_max']) ? $GLOBALS['result_count_max'] : 10) + $results_start;
+
+        $today = null;
+        $tomorrow = null;
+        if ($settings != null) {
+            if ($today == null) $today = (new DateTime($settings->set_day))->format('w') + 1;
+            if ($tomorrow == null) $tomorrow = (new DateTime($settings->set_day))->modify('+1 day')->format('w') + 1;
+        }
+
+        $meeting_results = getMeetings($coordinates->latitude, $coordinates->longitude, $results_count, $today, $tomorrow);
+    } catch (Exception $e) {
+        error_log($e);
+        exit;
+    }
+
+    $filtered_list = $meeting_results->filteredList;
+    $data = [];
+
+    for ($i = $results_start; $i < $results_count; $i++) {
+        $results = getResultsString($filtered_list[$i]);
+        $distance_string = "(" . round($filtered_list[$i]->distance_in_miles) . " mi / " . round($filtered_list[$i]->distance_in_km) . " km)";
+
+        $message = implode("\n", $results) . "\n" . $distance_string;
+
+        array_push($data, [
+            "latitude" => $filtered_list[$i]->latitude,
+            "longitude" => $filtered_list[$i]->longitude,
+            "distance" => $distance_string,
+            "raw_data" => $filtered_list[$i],
+            "message" => $message]);
+    }
+
+    return $data;
 }
 
 function getCoordinatesForAddress($address) {

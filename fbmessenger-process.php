@@ -1,7 +1,10 @@
 <?php
 include 'functions.php';
 require_once 'vendor/autoload.php';
-$client = new Predis\Client();
+if (!isset($GLOBALS['redis_connection_string'])) {
+    $GLOBALS['redis_connection_string'] = 'tcp://127.0.0.1:6379';
+}
+$client = new Predis\Client($GLOBALS['redis_connection_string']);
 $expiry_minutes = 5;
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -24,6 +27,9 @@ if (isset($messaging['message']['text']) && $messaging['message']['text'] !== nu
 $payload = null;
 $answer = "";
 
+
+$settings = json_decode($GLOBALS['client']->get('messenger_user_day_' . $messaging['sender']['id']));
+
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
     sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  You can also send your location, using the button below.  (Note: Distances, unless a precise location, will be estimates.)");
@@ -39,14 +45,14 @@ if (isset($messaging['postback']['payload'])
 } elseif (isset($messageText)
           && strtoupper($messageText) == "MORE RESULTS") {
     $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
-    sendMeetingResults( $payload->coordinates, $messaging['sender']['id'], $payload->results_start);
+    sendMeetingResults($payload->coordinates, getMeetingResults($payload->coordinates, $settings, $payload->results_start));
 } elseif (isset($messaging['postback']['payload'])) {
     $payload = json_decode($messaging['postback']['payload']);
-    $client->setex('messenger_user_day_' . $messaging['sender']['id'], ($expiry_minutes * 60), json_encode($payload));
+    $client->setex('messenger_user_day_' . $senderId, ($expiry_minutes * 60), json_encode($payload));
 
-    $coordinates = getSavedCoordinates($messaging['sender']['id']);
+    $coordinates = getSavedCoordinates($senderId);
     if ($coordinates != null) {
-        sendMeetingResults($coordinates, $messaging['sender']['id']);
+        sendMeetingResults($coordinates, getMeetingResults($coordinates, $settings));
     } else {
         sendMessage('The day has been set to ' . $payload->set_day . ".  This setting will reset to lookup Today's meetings in 5 minutes.  Enter a City, County or Zip Code.");
     }
@@ -62,8 +68,8 @@ if (isset($messaging['postback']['payload'])
         sendMessage("Enter a location, and then resubmit your request.", $coordinates);
     }
 } else {
-    sendMeetingResults($coordinates, $messaging['sender']['id']);
-    $client->setex('messenger_user_location_' . $messaging['sender']['id'], ($expiry_minutes * 60), json_encode($coordinates));
+    sendMeetingResults($coordinates, getMeetingResults($coordinates, $settings));
+    $client->setex('messenger_user_location_' . $senderId, ($expiry_minutes * 60), json_encode($coordinates));
 }
 
 function sendServiceBodyCoverage($coordinates) {
@@ -83,64 +89,37 @@ function getSavedCoordinates($sender_id) {
     }
 }
 
-function sendMeetingResults($coordinates, $sender_id, $results_start = 0) {
+function doIHaveTheBMLTChecker($results) {
+    return round($results[0]['raw_data']->distance_in_miles) < 100;
+}
+
+function sendMeetingResults($coordinates, $results) {
     if ($coordinates->latitude !== null && $coordinates->longitude !== null) {
-        try {
-            $results_count = (isset($GLOBALS['result_count_max']) ? $GLOBALS['result_count_max'] : 10) + $results_start;
-            $settings = json_decode($GLOBALS['client']->get('messenger_user_day_' . $sender_id));
-            $today = null;
-            $tomorrow = null;
-            if ($settings != null) {
-                if ($today == null) $today = (new DateTime($settings->set_day))->format('w') + 1;
-                if ($tomorrow == null) $tomorrow = (new DateTime($settings->set_day))->modify('+1 day')->format('w') + 1;
-            }
-
-            $meeting_results = getMeetings($coordinates->latitude, $coordinates->longitude, $results_count, $today, $tomorrow);
-        } catch (Exception $e) {
-            error_log($e);
-            exit;
-        }
-
-        $filtered_list = $meeting_results->filteredList;
-        $data = [];
-        $doihavethebmlt = true;
-
-        for ($i = $results_start; $i < $results_count; $i++) {
-            // Growth hacking
-            if ($i == 0) {
-                if (round($filtered_list[$i]->distance_in_miles) >= 100) {
-                    $doihavethebmlt = false;
-                }
-            }
-
-            $results = getResultsString($filtered_list[$i]);
-            $distance_string = "(" . round($filtered_list[$i]->distance_in_miles) . " mi / " . round($filtered_list[$i]->distance_in_km) . " km)";
-
-            $message = implode("\n", $results) . "\n" . $distance_string;
-            sendMessage($message,
+        $map_payload = [];
+        for ($i = 0; $i < count($results); $i++) {
+            sendMessage($results[$i]['message'],
                 $coordinates,
-                $results_count);
+                count($results));
 
-            array_push($data, [
-                "latitude" => $filtered_list[$i]->latitude,
-                "longitude" => $filtered_list[$i]->longitude,
-                "distance" => $distance_string,
-                "results" => $results]);
+            array_push($map_payload, [
+                "latitude" => $results[$i]['latitude'],
+                "longitude" => $results[$i]['longitude'],
+                "distance" => $results[$i]['distance'],
+                "raw_data" => $results[$i]['raw_data']
+            ]);
         }
 
         $map_page_url = "https://"
-                    .$_SERVER['HTTP_HOST']."/"
-                    .str_replace("process", "map", $_SERVER['PHP_SELF'])
-                    ."?Data=" . base64_encode(json_encode($data))
-                    ."&Latitude=" . $coordinates->latitude
-                    ."&Longitude=" . $coordinates->longitude;
+            . $_SERVER['HTTP_HOST'] . "/"
+            . str_replace("process", "map", $_SERVER['PHP_SELF'])
+            . "?Data=" . base64_encode(json_encode($map_payload))
+            . "&Latitude=" . $coordinates->latitude
+            . "&Longitude=" . $coordinates->longitude;
 
-        error_log($map_page_url);
+        sendButton('Follow-up Actions', 'Results Map', $map_page_url, $coordinates, count($results));
 
-        sendButton('Follow-up Actions', 'Results Map', $map_page_url, $coordinates, $results_count);
-
-        if (!$doihavethebmlt) {
-            sendMessage( "Your community may not be covered by the BMLT yet.  https://www.doihavethebmlt.org/?latitude=" . $coordinates->latitude . "&longitude=" . $coordinates->longitude );
+        if (!doIHaveTheBMLTChecker($results)) {
+            sendMessage("Your community may not be covered by the BMLT yet.  https://www.doihavethebmlt.org/?latitude=" . $coordinates->latitude . "&longitude=" . $coordinates->longitude);
         }
     } else {
         sendMessage("Location not recognized.  I only recognize City, County or Postal Code.");
