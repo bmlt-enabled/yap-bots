@@ -35,7 +35,7 @@ include_once 'functions.php';?>
                 $label = "";
                 $row = 1;
 
-                foreach ($data_point->results as $result) {
+                foreach ($data_point->raw_data as $result) {
                     if ($row == 1) {
                         $label .= "<b>" . $result . "</b><br/>";
                     } else {

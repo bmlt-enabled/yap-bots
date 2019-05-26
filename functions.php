@@ -1,8 +1,8 @@
 <?php
 include_once 'config.php';
 static $days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($google_maps_api_key);
-$timezone_lookup_endpoint = "https://maps.googleapis.com/maps/api/timezone/json?key=" . trim($google_maps_api_key);
+$google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($ss_google_maps_api_key);
+$timezone_lookup_endpoint = "https://maps.googleapis.com/maps/api/timezone/json?key=" . trim($ss_google_maps_api_key);
 
 class Coordinates {
     public $location;
@@ -85,7 +85,7 @@ function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
             "latitude" => $filtered_list[$i]->latitude,
             "longitude" => $filtered_list[$i]->longitude,
             "distance" => $distance_string,
-            "raw_data" => $filtered_list[$i],
+            "raw_data" => $results,
             "message" => $message]);
     }
 
