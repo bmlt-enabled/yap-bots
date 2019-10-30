@@ -119,4 +119,4 @@ $payload = [
     ])
 ];
 
-post("https://graph.facebook.com/v3.0/me/messenger_profile?access_token=" . $GLOBALS['fbmessenger_accesstoken'], $payload);
+post("https://graph.facebook.com/v5.0/me/messenger_profile?access_token=" . $GLOBALS['fbmessenger_accesstoken'], $payload);

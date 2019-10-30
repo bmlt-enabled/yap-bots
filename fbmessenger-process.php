@@ -164,7 +164,7 @@ function sendButton($title, $button_title, $link, $coordinates = null, $results_
 }
 
 function quickReplies( $coordinates, $results_count ) {
-    $quick_replies_payload = array( [ 'content_type' => 'location' ] );
+    $quick_replies_payload = array();
 
     if ( isset( $coordinates ) ) {
         array_push( $quick_replies_payload,
@@ -193,5 +193,5 @@ function quickReplies( $coordinates, $results_count ) {
 }
 
 function sendBotResponse($payload) {
-    post('https://graph.facebook.com/v3.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
+    post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
 }
