@@ -32,7 +32,7 @@ $settings = json_decode($GLOBALS['client']->get('messenger_user_day_' . $messagi
 
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
-    sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  You can also send your location, using the button below.  (Note: Distances, unless a precise location, will be estimates.)");
+    sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  (Note: Distances, unless a precise location, will be estimates.)");
     sendMessage("By default, results for today will show up.  You can adjust this setting using the menu below.");
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
@@ -59,7 +59,10 @@ if (isset($messaging['postback']['payload'])
 } elseif (isset($messageText) && strtoupper($messageText) == "THANK YOU") {
     sendMessage( ":)" );
 } elseif (isset($messageText) && strtoupper($messageText) == "HELP") {
-    sendMessage( "To find more information on this messenger app visit https://github.com/radius314/yap.");
+    sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  (Note: Distances, unless a precise location, will be estimates.)");
+    sendMessage("By default, results for today will show up.  You can adjust this setting using the menu below.");
+    sendMessage("Recently Facebook removed the Quick Location button.  We are searching for an alternative approach to make your search experience better.");
+    sendMessage("Not finding results close by?  It's likely that your community is not yet covered by the BMLT (https://doihavethebmlt.org).  Send an email to help@bmlt.app to find out how to get the BMLT in your community.");
 } elseif (isset($messageText) && strtoupper($messageText) == "📞 HELPLINE") {
     $coordinates = json_decode( $messaging['message']['quick_reply']['payload'] )->coordinates;
     if ($coordinates != null) {
@@ -188,6 +191,13 @@ function quickReplies( $coordinates, $results_count ) {
                 ] )
             ] );
     }
+
+    array_push( $quick_replies_payload,
+        [
+            'content_type' => 'text',
+            'title'        => 'Help',
+            'payload'      => 'help'
+        ]);
 
     return $quick_replies_payload;
 }

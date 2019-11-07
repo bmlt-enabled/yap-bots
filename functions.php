@@ -145,6 +145,7 @@ function post($url, $payload, $is_json = true) {
     error_log($url);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $post_field_count = $is_json ? 1 : substr_count($payload, '=');
     curl_setopt($ch, CURLOPT_POST, $post_field_count);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $is_json ? json_encode($payload) : $payload);
@@ -153,6 +154,7 @@ function post($url, $payload, $is_json = true) {
     }
     curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap" );
     $data = curl_exec($ch);
+    error_Log($data);
     $errorno = curl_errno($ch);
     curl_close($ch);
     if ($errorno > 0) {
