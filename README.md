@@ -2,7 +2,7 @@
 
 ## facebook messenger
 
-**Your instance will have to have HTTPS/SSL enabled.  You will also need redis running locally.**
+**Your instance will have to have HTTPS/SSL enabled.  You will also need a MySQL database.**
 
 1) Create a new app under your Facebook developer account https://developers.facebook.com/apps/.  Whatever you name it will be the name of your bot.  (Example: North Carolina Region of NA)
 2) Select "Messenger" as application product
@@ -31,11 +31,14 @@ static $fbmessenger_verifytoken = '';
 Other settings in config.php that will have to be set
 
 * `$yap_url`: points to your Yap instance
-* `$ss_google_maps_api_key`: your google maps api key (do not use referrer restrictions) - not exposed
-* `$cs_google_maps_api_key`: a different google maps api key (use referrer restrictions) - exposed
+* `$ss_google_maps_api_key`: your google maps api key (use IP-based referrer restrictions)
+* `$cs_google_maps_api_key`: a different google maps api key (use HTTP-referrer restrictions)
 * `$title`: intro message when someone starts a conversation with your bot
 * `*$location_lookup_bias` (optional): set a bias on the google maps api lookup
 * `$result_count_max` (optional): set the max results to return on a lookup (default is 10).
+* `$mysql_hostname`, `$mysql_username`, `$mysql_password`, `$mysql_database`: database settings for MySQL.
+
+You will have to run the `database.sql` script against your database.
 
 Note: If you decide to change the `$title` in your config.php, you will have to force a refresh on your Facebook Messenger settings by calling `http://your-yap-server/fbmessenger-activate.php` again.  After this is done, it may take some time for Facebook to show these changes.
 

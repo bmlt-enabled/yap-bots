@@ -1,8 +1,10 @@
 <?php
 include_once 'config.php';
+include_once 'database.php';
 static $days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 $google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key=" . trim($ss_google_maps_api_key);
 $timezone_lookup_endpoint = "https://maps.googleapis.com/maps/api/timezone/json?key=" . trim($ss_google_maps_api_key);
+static $state_expiry_seconds = 1200;
 
 class Coordinates {
     public $location;
@@ -16,6 +18,33 @@ class DataOutputType {
     const KML = "kml";
     const CSV = "csv";
     const POI_CSV = "poi";
+}
+
+class StateDataType
+{
+    const DAY = "day";
+    const LOCATION = "location";
+}
+
+function getState($senderId, $type) {
+    $db = new Database();
+    $db->query(sprintf("SELECT data, timestampdiff(SECOND, timestamp, current_timestamp) as timediff FROM state_%s where senderId = :senderId and timestampdiff(SECOND, timestamp, current_timestamp) <= %s ORDER BY timestamp DESC LIMIT 1;", $type, $GLOBALS['state_expiry_seconds']));
+    $db->bind(':senderId', $senderId);
+    $resultset = $db->single();
+    $db->close();
+    return $resultset['data'];
+}
+
+function setState($senderId, $type, $data) {
+    $db = new Database();
+    $stmt = sprintf("INSERT INTO `state_%s` (`senderId`,`data`,`timestamp`) VALUES (:senderId, :data, :timestamp)", $type);
+    $db->query($stmt);
+    $db->bind(':senderId', $senderId);
+    $db->bind(':data', $data);
+    date_default_timezone_set('UTC');
+    $db->bind(':timestamp', gmdate("Y-m-d H:i:s"));
+    $db->execute();
+    $db->close();
 }
 
 function getResultsString($filtered_list) {
@@ -85,6 +114,7 @@ function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
             "latitude" => $filtered_list[$i]->latitude,
             "longitude" => $filtered_list[$i]->longitude,
             "distance" => $distance_string,
+            "distance_in_miles" => $filtered_list[$i]->distance_in_miles,
             "raw_data" => $results,
             "message" => $message]);
     }

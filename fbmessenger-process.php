@@ -1,12 +1,5 @@
 <?php
 include 'functions.php';
-require_once 'vendor/autoload.php';
-if (!isset($GLOBALS['redis_connection_string'])) {
-    $GLOBALS['redis_connection_string'] = 'tcp://127.0.0.1:6379';
-}
-$client = new Predis\Client($GLOBALS['redis_connection_string']);
-$expiry_minutes = 5;
-
 $input = json_decode(file_get_contents('php://input'), true);
 error_log(json_encode($input));
 
@@ -27,8 +20,7 @@ if (isset($messaging['message']['text']) && $messaging['message']['text'] !== nu
 $payload = null;
 $answer = "";
 
-
-$settings = json_decode($GLOBALS['client']->get('messenger_user_day_' . $messaging['sender']['id']));
+$settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
 
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
@@ -48,10 +40,11 @@ if (isset($messaging['postback']['payload'])
     sendMeetingResults($payload->coordinates, getMeetingResults($payload->coordinates, $settings, $payload->results_start));
 } elseif (isset($messaging['postback']['payload'])) {
     $payload = json_decode($messaging['postback']['payload']);
-    $client->setex('messenger_user_day_' . $senderId, ($expiry_minutes * 60), json_encode($payload));
+    setState($senderId, StateDataType::DAY, json_encode($payload));
 
     $coordinates = getSavedCoordinates($senderId);
     if ($coordinates != null) {
+        $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
         sendMeetingResults($coordinates, getMeetingResults($coordinates, $settings));
     } else {
         sendMessage('The day has been set to ' . $payload->set_day . ".  This setting will reset to lookup Today's meetings in 5 minutes.  Enter a City, County or Zip Code.");
@@ -72,7 +65,7 @@ if (isset($messaging['postback']['payload'])
     }
 } else {
     sendMeetingResults($coordinates, getMeetingResults($coordinates, $settings));
-    $client->setex('messenger_user_location_' . $senderId, ($expiry_minutes * 60), json_encode($coordinates));
+    setState($senderId, StateDataType::LOCATION, json_encode($coordinates));
 }
 
 function sendServiceBodyCoverage($coordinates) {
@@ -85,15 +78,16 @@ function sendServiceBodyCoverage($coordinates) {
 }
 
 function getSavedCoordinates($sender_id) {
-    if ($GLOBALS['client']->get('messenger_user_location_' . $sender_id) != null) {
-        return json_decode($GLOBALS['client']->get('messenger_user_location_' . $sender_id));
+    $location = getState($sender_id, StateDataType::LOCATION);
+    if ($location != null) {
+        return json_decode($location);
     } else {
         return null;
     }
 }
 
 function doIHaveTheBMLTChecker($results) {
-    return round($results[0]['raw_data']->distance_in_miles) < 100;
+    return round($results[0]['distance_in_miles']) < 100;
 }
 
 function sendMeetingResults($coordinates, $results) {
