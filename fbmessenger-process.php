@@ -152,6 +152,10 @@ function sendButton($title, $button_title, $link, $coordinates = null, $results_
                         'type' => 'web_url',
                         'url' => $link,
                         'title' => $button_title
+                    ],[
+                        'type' => 'web_url',
+                        'url' => 'https://virtual-na.org/meetings',
+                        'title' => 'Virtual Meetings'
                     ])
                 ]
             ],
