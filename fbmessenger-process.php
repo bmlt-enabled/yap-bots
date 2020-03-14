@@ -154,7 +154,7 @@ function sendButton($title, $button_title, $link, $coordinates = null, $results_
                         'title' => $button_title
                     ],[
                         'type' => 'web_url',
-                        'url' => 'https://virtual-na.org/meetings',
+                        'url' => sprintf("https://%s/%s", $_SERVER['HTTP_HOST'], str_replace("process", "virtual", $_SERVER['PHP_SELF'])),
                         'title' => 'Virtual Meetings'
                     ])
                 ]
