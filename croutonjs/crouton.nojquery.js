@@ -13183,11 +13183,11 @@ this["hbs_Crouton"]["templates"]["header"] = Handlebars.template({"1":function(c
 },"6":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"cities",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":11,"column":107},"end":{"line":11,"column":127}}}))
-    + "\" data-pointer=\"Cities\" id=\"e1\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"cities",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":11,"column":123},"end":{"line":11,"column":143}}}))
+    + "\" data-pointer=\"Cities\" id=\"filter-dropdown-cities\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.cities : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":13,"column":16},"end":{"line":15,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"7":function(container,depth0,helpers,partials,data) {
@@ -13201,21 +13201,21 @@ this["hbs_Crouton"]["templates"]["header"] = Handlebars.template({"1":function(c
 },"9":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"groups",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":22,"column":107},"end":{"line":22,"column":127}}}))
-    + "\" data-pointer=\"Groups\" id=\"e2\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"groups",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":22,"column":123},"end":{"line":22,"column":143}}}))
+    + "\" data-pointer=\"Groups\" id=\"filter-dropdown-groups\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.groups : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":24,"column":16},"end":{"line":26,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"11":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"areas",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":33,"column":107},"end":{"line":33,"column":126}}}))
-    + "\" data-pointer=\"Areas\" id=\"e3\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"areas",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":33,"column":123},"end":{"line":33,"column":142}}}))
+    + "\" data-pointer=\"Areas\" id=\"filter-dropdown-areas\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.areas : stack1),{"name":"each","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":35,"column":16},"end":{"line":37,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"12":function(container,depth0,helpers,partials,data) {
@@ -13229,61 +13229,61 @@ this["hbs_Crouton"]["templates"]["header"] = Handlebars.template({"1":function(c
 },"14":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"locations",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":44,"column":107},"end":{"line":44,"column":130}}}))
-    + "\" data-pointer=\"Locations\" id=\"e4\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"locations",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":44,"column":123},"end":{"line":44,"column":146}}}))
+    + "\" data-pointer=\"Locations\" id=\"filter-dropdown-locations\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.locations : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":46,"column":16},"end":{"line":48,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"16":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"counties",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":55,"column":107},"end":{"line":55,"column":129}}}))
-    + "\" data-pointer=\"Counties\" id=\"e5\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"counties",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":55,"column":123},"end":{"line":55,"column":145}}}))
+    + "\" data-pointer=\"Counties\" id=\"filter-dropdown-sub_province\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.sub_provinces : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":57,"column":16},"end":{"line":59,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"18":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"neighborhood",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":66,"column":107},"end":{"line":66,"column":133}}}))
-    + "\" data-pointer=\"Neighborhoods\" id=\"e5\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"neighborhood",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":66,"column":123},"end":{"line":66,"column":149}}}))
+    + "\" data-pointer=\"Neighborhoods\" id=\"filter-dropdown-neighborhoods\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.neighborhoods : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":68,"column":4},"end":{"line":70,"column":13}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"20":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"states",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":77,"column":107},"end":{"line":77,"column":127}}}))
-    + "\" data-pointer=\"States\" id=\"e6\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"states",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":77,"column":123},"end":{"line":77,"column":143}}}))
+    + "\" data-pointer=\"States\" id=\"filter-dropdown-states\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.states : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":79,"column":16},"end":{"line":81,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"22":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"postal_codes",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":88,"column":107},"end":{"line":88,"column":133}}}))
-    + "\" data-pointer=\"Zips\" id=\"e7\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"postal_codes",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":88,"column":123},"end":{"line":88,"column":149}}}))
+    + "\" data-pointer=\"Zips\" id=\"filter-dropdown-zipcodes\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.zips : stack1),{"name":"each","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":90,"column":16},"end":{"line":92,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"24":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select\" style=\"width:"
+  return "        <div class=\"bmlt-dropdown-container\">\n            <select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"formats",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":99,"column":107},"end":{"line":99,"column":128}}}))
-    + "\" data-pointer=\"Formats\" id=\"e8\">\n                <option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"formats",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":99,"column":123},"end":{"line":99,"column":144}}}))
+    + "\" data-pointer=\"Formats\" id=\"filter-dropdown-formats\">\n                <option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.formats : stack1),{"name":"each","hash":{},"fn":container.program(25, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":101,"column":16},"end":{"line":103,"column":25}}})) != null ? stack1 : "")
     + "            </select>\n        </div>\n";
 },"25":function(container,depth0,helpers,partials,data) {
@@ -13297,11 +13297,11 @@ this["hbs_Crouton"]["templates"]["header"] = Handlebars.template({"1":function(c
 },"27":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.escapeExpression, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "		<div class=\"bmlt-dropdown-container\">\n			<select class=\"crouton-select\" style=\"width:"
+  return "		<div class=\"bmlt-dropdown-container\">\n			<select class=\"crouton-select filter-dropdown\" style=\"width:"
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.config : depth0)) != null ? stack1.dropdown_width : stack1), depth0))
     + ";\" data-placeholder=\""
-    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"languages",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":110,"column":98},"end":{"line":110,"column":121}}}))
-    + "\" data-pointer=\"Languages\" id=\"e9\">\n				<option></option>\n"
+    + alias1((helpers.getWord||(depth0 && depth0.getWord)||container.hooks.helperMissing).call(alias2,"languages",{"name":"getWord","hash":{},"data":data,"loc":{"start":{"line":110,"column":114},"end":{"line":110,"column":137}}}))
+    + "\" data-pointer=\"Languages\" id=\"filter-dropdown-languages\">\n				<option></option>\n"
     + ((stack1 = helpers.each.call(alias2,((stack1 = (depth0 != null ? depth0.uniqueData : depth0)) != null ? stack1.languages : stack1),{"name":"each","hash":{},"fn":container.program(28, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":112,"column":4},"end":{"line":114,"column":13}}})) != null ? stack1 : "")
     + "			</select>\n		</div>\n";
 },"28":function(container,depth0,helpers,partials,data) {
@@ -13477,16 +13477,19 @@ function Crouton(config) {
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
+		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
 		map_max_zoom: 15,		      // Maximum zoom for the display map
 		time_format: "h:mm a",        // The format for time
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
+		filter_tabs: false,   		  // Whether to show weekday tabs on filtering.
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
 		],
+		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_cities: true,             // Shows the cities dropdown
@@ -13738,12 +13741,6 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
-
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -13756,12 +13753,6 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
-
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -13775,12 +13766,6 @@ function Crouton(config) {
 
 	self.filteredView = function (field) {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
-
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#filterButton_" + field);
@@ -13807,9 +13792,8 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 
-	self.filteredPage = function (id, dataType, dataValue) {
-		self.resetFilter();
-		self.showPage(id);
+	self.filteredPage = function (dataType, dataValue) {
+		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		if (dataType !== "formats" && dataType !== "languages") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
@@ -13817,14 +13801,24 @@ function Crouton(config) {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 		}
 
-		jQuery(".bmlt-data-rows").each(function (index, value) {
-			if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-				jQuery(value).find(".meeting-header").addClass("hide");
-			}
-		})
+		if (self.config['filter_tabs']) {
+			self.showPage("#nav-days");
+			self.showPage("#tabs-content");
+		} else {
+			self.lowlightButton(".filterButton");
+			self.lowlightButton("#day");
+			self.showPage("#byday");
+
+			jQuery(".bmlt-data-rows").each(function (index, value) {
+				if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
+					jQuery(value).find(".meeting-header").addClass("hide");
+				}
+			});
+		}
 	};
 
 	self.resetFilter = function () {
+		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 	};
@@ -13838,12 +13832,6 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).html(template(context));
-		if (self.config['map_search'] != null || self.config['show_map']) {
-			jQuery(".bmlt-data-row").css({cursor: "pointer"});
-			jQuery(".bmlt-data-row").click(function () {
-				self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
-			});
-		}
 		callback();
 	};
 
@@ -14179,6 +14167,13 @@ Crouton.prototype.render = function(callback) {
 					},
 					"uniqueData": self.uniqueData
 				}, function () {
+					if (self.config['map_search'] != null || self.config['show_map']) {
+						jQuery(".bmlt-data-row").css({cursor: "pointer"});
+						jQuery(".bmlt-data-row").click(function () {
+							self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+						});
+					}
+
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
@@ -14195,26 +14190,16 @@ Crouton.prototype.render = function(callback) {
 						}
 					});
 
-					for (var a = 1; a < self.max_filters; a++) {
-						jQuery("#e" + a).on('select2:select', function (e) {
-							for (var j = 1; j < self.max_filters; j++) {
-								if (this.id !== "e" + j) {
-									if (jQuery("#e" + j).length) {
-										jQuery("#e" + j).select2("val", null);
-									}
-								}
-							}
+					jQuery('.filter-dropdown').on('select2:select', function (e) {
+						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
 
-							var val = jQuery("#" + this.id).val();
-							jQuery('.bmlt-page').each(function (index) {
-								self.hidePage("#" + this.id);
-								self.lowlightButton(".filterButton");
-								self.lowlightButton("#day");
-								self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
-								return;
-							});
+						var val = jQuery(this).val();
+						jQuery('.bmlt-page').each(function () {
+							self.hidePage(this);
+							self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+							return;
 						});
-					}
+					});
 
 					jQuery("#day").on('click', function () {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
@@ -14247,6 +14232,11 @@ Crouton.prototype.render = function(callback) {
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
+
+					if (self.config['default_filter_dropdown'] !== "") {
+						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
+						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
+					}
 
 					if (self.config['show_distance']) {
 						self.getCurrentLocation(self.showLocation);
