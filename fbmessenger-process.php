@@ -11,16 +11,17 @@ $senderId  = $messaging['sender']['id'];
 if (isset($messaging['message']['text']) && $messaging['message']['text'] !== null) {
     $messageText = $messaging['message']['text'];
     $coordinates = getCoordinatesForAddress($messageText);
-} elseif (isset($messaging_attachment_payload) && $messaging_attachment_payload !== null) {
+} /*elseif (isset($messaging_attachment_payload) && $messaging_attachment_payload !== null) {
     $coordinates = new Coordinates();
     $coordinates->latitude = $messaging_attachment_payload['coordinates']['lat'];
     $coordinates->longitude = $messaging_attachment_payload['coordinates']['long'];
-}
+}*/
 
 $payload = null;
 $answer = "";
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
+$GLOBALS['virtual'] = strpos($messageText, "vm") === 0;
 
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {

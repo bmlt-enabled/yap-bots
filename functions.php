@@ -50,23 +50,29 @@ function setState($senderId, $type, $data) {
 function getResultsString($filtered_list) {
     $additional_info_array = [];
 
-    if ($filtered_list->location_text != "") array_push($additional_info_array, $filtered_list->location_text);
-    if ($filtered_list->location_info != "") array_push($additional_info_array, $filtered_list->location_info);
-    $additional_info = trim(implode(" / ", $additional_info_array));
+    if ($GLOBALS['virtual']) {
+        $additional_info = str_replace("tel:", "", str_replace(" ", "", $filtered_list->comments));
+    } else {
+        if ($filtered_list->location_text != "") array_push($additional_info_array, $filtered_list->location_text);
+        if ($filtered_list->location_info != "") array_push($additional_info_array, $filtered_list->location_info);
+        $additional_info = trim(implode(" / ", $additional_info_array));
+    }
 
     $response = [];
 
     array_push($response, str_replace("&", "&amp;", $filtered_list->meeting_name));
     array_push($response, str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
-                                  . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A')));
+                                  . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A T')));
 
     if ($additional_info != null) {
         array_push($response, $additional_info);
     }
 
-    array_push($response, str_replace("&", "&amp;", $filtered_list->location_street
-                                  . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
-                                  . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
+    if (!$GLOBALS['virtual']) {
+        array_push($response, str_replace("&", "&amp;", $filtered_list->location_street
+            . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
+            . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
+    }
 
     return $response;
 }
@@ -108,7 +114,7 @@ function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
         $results = getResultsString($filtered_list[$i]);
         $distance_string = "(" . round($filtered_list[$i]->distance_in_miles) . " mi / " . round($filtered_list[$i]->distance_in_km) . " km)";
 
-        $message = implode("\n", $results) . "\n" . $distance_string;
+        $message = implode("\n", $results) . (!$GLOBALS['virtual'] ? "\n" . $distance_string : "");
 
         array_push($data, [
             "latitude" => $filtered_list[$i]->latitude,
@@ -148,7 +154,7 @@ function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow) {
 
 function getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow, $format = DataOutputType::JSON) {
     return sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s&format=%s",
-        $GLOBALS['yap_url'],  $latitude, $longitude, $results_count, $today, $tomorrow, $format);
+        ($GLOBALS['virtual'] ? "https://vphone.bmltenabled.org" : $GLOBALS['yap_url']),  $latitude, $longitude, $results_count, $today, $tomorrow, $format);
 }
 
 function getServiceBodyCoverage($latitude, $longitude) {
