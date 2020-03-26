@@ -10,6 +10,8 @@ if (isset($messaging['message']['attachments'])) {
 $senderId  = $messaging['sender']['id'];
 if (isset($messaging['message']['text']) && $messaging['message']['text'] !== null) {
     $messageText = $messaging['message']['text'];
+    $GLOBALS['virtual'] = strpos(strtolower($messageText), "vm") === 0;
+    $messageText = ltrim(preg_replace("/(vm)(.*)/", "$2", strtolower($messageText)));
     $coordinates = getCoordinatesForAddress($messageText);
 } /*elseif (isset($messaging_attachment_payload) && $messaging_attachment_payload !== null) {
     $coordinates = new Coordinates();
@@ -21,8 +23,6 @@ $payload = null;
 $answer = "";
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
-$GLOBALS['virtual'] = strpos(strtolower($messageText), "vm") === 0;
-$messageText = ltrim(preg_replace("/(vm)(.*)/", "$2", strtolower($messageText)));
 
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
