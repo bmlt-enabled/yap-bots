@@ -22,6 +22,7 @@ $answer = "";
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
 $GLOBALS['virtual'] = strpos(strtolower($messageText), "vm") === 0;
+$messageText = ltrim(preg_replace("/(vm)(.*)/", "$2", strtolower($messageText)));
 
 if (isset($messaging['postback']['payload'])
     && $messaging['postback']['payload'] == "get_started") {
