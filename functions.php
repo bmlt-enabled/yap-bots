@@ -198,32 +198,3 @@ function post($url, $payload, $is_json = true) {
     }
     return $data;
 }
-
-function async_post($url, $payload)  {
-    error_log($url);
-    $parts = parse_url($url);
-
-    if (isset($parts['port'])) {
-        $port = $parts['port'];
-    } else if ($parts['scheme'] == 'https') {
-        $port = 443;
-    } else {
-        $port = 80;
-    }
-
-    $host = ($parts['scheme'] == 'https' ? "ssl://" : "") . $parts['host'];
-    $fp = fsockopen($host, $port, $errno, $errstr, 30);
-    assert(($fp!=0), "Couldn’t open a socket to ".$url." (".$errstr.")");
-    $post_data = json_encode($payload);
-
-    $out = "POST ".$parts['path']." HTTP/1.1\r\n";
-    $out.= "Host: ".$parts['host']."\r\n";
-    $out.= "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap\r\n";
-    $out.= "Content-Type: application/json\r\n";
-    $out.= "Content-Length: ".strlen($post_data)."\r\n";
-    $out.= "Connection: Close\r\n\r\n";
-    if (isset($post_data)) $out.= $post_data;
-
-    fwrite($fp, $out);
-    fclose($fp);
-}
