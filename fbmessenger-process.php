@@ -31,7 +31,7 @@ if (isset($messaging['postback']['payload'])
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
-    $result = get("https://www.jftna.org/jft/");
+    $result = get("https://jftna.org/jft/");
     $stripped_results = strip_tags($result);
     $without_tabs = str_replace("\t", "", $stripped_results);
     $without_htmlentities = html_entity_decode($without_tabs);
