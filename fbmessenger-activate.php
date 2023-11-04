@@ -111,6 +111,11 @@ $payload = [
                 'payload' => 'JFT'
             ],
             [
+                'title' => 'Spiritual Principal A Day',
+                'type' => 'postback',
+                'payload' => 'SPAD'
+            ],
+            [
                 'title' => 'Feature Request/Report Bug',
                 'type' => 'web_url',
                 'url' => 'https://www.facebook.com/BMLT-656690394722060/',

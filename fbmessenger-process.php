@@ -33,6 +33,17 @@ if (isset($messaging['message']['text']) && $messaging['message']['text'] !== nu
 
 $payload = null;
 $answer = "";
+$jftLanguages = [
+    'english' => JFTLanguage::English,
+    'german' => JFTLanguage::German,
+    'italian' => JFTLanguage::Italian,
+    'japanese' => JFTLanguage::Japanese,
+    'portuguese' => JFTLanguage::Portuguese,
+    'russian' => JFTLanguage::Russian,
+    'spanish' => JFTLanguage::Spanish,
+    'swedish' => JFTLanguage::Swedish,
+    'french' => JFTLanguage::French,
+];
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
 
@@ -43,11 +54,9 @@ if (isset($messaging['postback']['payload'])
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
-    $settings = new JFTSettings(JFTLanguage::English);
-    $instance = JFT::getInstance($settings);
-    $entry = $instance->fetch();
-    $entryTxt = recursiveToString($entry->withoutTags());
-    sendMessage( $entryTxt );
+    sendJftLanguageOptions(array_keys($jftLanguages));
+} elseif (isset($messageText) && in_array(strtolower($messageText), array_keys($jftLanguages))) {
+    handleJftLanguageSelection($jftLanguages, strtolower($messageText));
 } elseif ((isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "SPAD"))) {
 
@@ -225,6 +234,35 @@ function quickReplies( $coordinates, $results_count ) {
 
 function sendBotResponse($payload) {
     post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
+}
+
+function handleJFtLanguageSelection($jftLanguages, $selectedLanguage) {
+    $selectedLanguage = $jftLanguages[$selectedLanguage] ?? JFTLanguage::English;
+    $settings = new JFTSettings($selectedLanguage);
+    $instance = JFT::getInstance($settings);
+    $entry = $instance->fetch();
+    $entryTxt = recursiveToString($entry->withoutTags());
+    sendMessage( $entryTxt );
+}
+
+function sendJftLanguageOptions($languages) {
+    $quickReplies = [];
+    foreach ($languages as $language) {
+        $quickReplies[] = [
+            "content_type" => "text",
+            "title" => ucfirst($language),
+            "payload" => strtolower($language)
+        ];
+    }
+
+    sendBotResponse([
+        'recipient' => ['id' => $GLOBALS['senderId']],
+        'messaging_type' => 'RESPONSE',
+        'message' => [
+            'text' => 'Please select a language:',
+            'quick_replies' => $quickReplies
+        ]
+    ]);
 }
 
 function recursiveToString($value) {
