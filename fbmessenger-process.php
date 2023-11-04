@@ -1,5 +1,17 @@
 <?php
+
+require_once(__DIR__ . '/vendor/autoload.php');
+
 include 'functions.php';
+
+use FetchMeditation\JFTLanguage;
+use FetchMeditation\JFTSettings;
+use FetchMeditation\JFT;
+
+use FetchMeditation\SPADLanguage;
+use FetchMeditation\SPADSettings;
+use FetchMeditation\SPAD;
+
 $input = json_decode(file_get_contents('php://input'), true);
 error_log(json_encode($input));
 
@@ -31,12 +43,19 @@ if (isset($messaging['postback']['payload'])
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
-    $result = get("https://jftna.org/jft/");
-    $stripped_results = strip_tags($result);
-    $without_tabs = str_replace("\t", "", $stripped_results);
-    $without_htmlentities = html_entity_decode($without_tabs);
-    $without_extranewlines = preg_replace("/[\r\n]+/", "\n\n", $without_htmlentities);
-    sendMessage( $without_extranewlines );
+    $settings = new JFTSettings(JFTLanguage::English);
+    $instance = JFT::getInstance($settings);
+    $entry = $instance->fetch();
+    $entryTxt = recursiveToString($entry->withoutTags());
+    sendMessage( $entryTxt );
+} elseif ((isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
+        && $messaging['postback']['payload'] == "SPAD"))) {
+
+    $settings = new SPADSettings(SPADLanguage::English);
+    $instance = SPAD::getInstance($settings);
+    $entry = $instance->fetch();
+    $entryTxt = recursiveToString($entry->withoutTags());
+    sendMessage( $entryTxt );
 } elseif (isset($messageText)
           && strtoupper($messageText) == "MORE RESULTS") {
     $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
@@ -206,4 +225,16 @@ function quickReplies( $coordinates, $results_count ) {
 
 function sendBotResponse($payload) {
     post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
+}
+
+function recursiveToString($value) {
+    if (is_array($value)) {
+        $result = '';
+        foreach ($value as $item) {
+            $result .= recursiveToString($item);
+        }
+        return $result;
+    } else {
+        return $value . "\n\n";
+    }
 }
