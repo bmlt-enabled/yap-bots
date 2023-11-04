@@ -55,8 +55,9 @@ if (isset($messaging['postback']['payload'])
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
     sendJftLanguageOptions(array_keys($jftLanguages));
-} elseif (isset($messageText) && in_array(strtolower($messageText), array_keys($jftLanguages))) {
-    handleJftLanguageSelection($jftLanguages, strtolower($messageText));
+} elseif (isset($messaging['message']['quick_reply']['payload']) && in_array(strtolower($messaging['message']['quick_reply']['payload']), array_keys($jftLanguages))) {
+    $language = strtolower($messaging['message']['quick_reply']['payload']);
+    handleJftLanguageSelection($jftLanguages, strtolower($language));
 } elseif ((isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "SPAD"))) {
 
