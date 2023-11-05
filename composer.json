@@ -1,0 +1,17 @@
+{
+  "name": "bmlt/yap-bots",
+  "description": "Yap Bots for BMLT.",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "dgershman"
+    },
+    {
+      "name": "pjaudiomv"
+    }
+  ],
+  "require": {
+    "bmlt/fetch-meditation": "1.1.0"
+  }
+}

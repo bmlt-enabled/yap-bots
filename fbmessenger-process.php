@@ -1,5 +1,17 @@
 <?php
+
+require_once(__DIR__ . '/vendor/autoload.php');
+
 include 'functions.php';
+
+use FetchMeditation\JFTLanguage;
+use FetchMeditation\JFTSettings;
+use FetchMeditation\JFT;
+
+use FetchMeditation\SPADLanguage;
+use FetchMeditation\SPADSettings;
+use FetchMeditation\SPAD;
+
 $input = json_decode(file_get_contents('php://input'), true);
 error_log(json_encode($input));
 
@@ -21,6 +33,17 @@ if (isset($messaging['message']['text']) && $messaging['message']['text'] !== nu
 
 $payload = null;
 $answer = "";
+$jftLanguages = [
+    'english' => JFTLanguage::English,
+    'german' => JFTLanguage::German,
+    'italian' => JFTLanguage::Italian,
+    'japanese' => JFTLanguage::Japanese,
+    'portuguese' => JFTLanguage::Portuguese,
+    'russian' => JFTLanguage::Russian,
+    'spanish' => JFTLanguage::Spanish,
+    'swedish' => JFTLanguage::Swedish,
+    'french' => JFTLanguage::French,
+];
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
 
@@ -31,12 +54,18 @@ if (isset($messaging['postback']['payload'])
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
 } elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
         && $messaging['postback']['payload'] == "JFT"))) {
-    $result = get("https://jftna.org/jft/");
-    $stripped_results = strip_tags($result);
-    $without_tabs = str_replace("\t", "", $stripped_results);
-    $without_htmlentities = html_entity_decode($without_tabs);
-    $without_extranewlines = preg_replace("/[\r\n]+/", "\n\n", $without_htmlentities);
-    sendMessage( $without_extranewlines );
+    sendJftLanguageOptions(array_keys($jftLanguages));
+} elseif (isset($messaging['message']['quick_reply']['payload']) && in_array(strtolower($messaging['message']['quick_reply']['payload']), array_keys($jftLanguages))) {
+    $language = strtolower($messaging['message']['quick_reply']['payload']);
+    handleJftLanguageSelection($jftLanguages, strtolower($language));
+} elseif ((isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
+        && $messaging['postback']['payload'] == "SPAD"))) {
+
+    $settings = new SPADSettings(SPADLanguage::English);
+    $instance = SPAD::getInstance($settings);
+    $entry = $instance->fetch();
+    $entryTxt = recursiveToString($entry->withoutTags());
+    sendMessage( $entryTxt );
 } elseif (isset($messageText)
           && strtoupper($messageText) == "MORE RESULTS") {
     $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
@@ -206,4 +235,45 @@ function quickReplies( $coordinates, $results_count ) {
 
 function sendBotResponse($payload) {
     post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
+}
+
+function handleJFtLanguageSelection($jftLanguages, $selectedLanguage) {
+    $selectedLanguage = $jftLanguages[$selectedLanguage] ?? JFTLanguage::English;
+    $settings = new JFTSettings($selectedLanguage);
+    $instance = JFT::getInstance($settings);
+    $entry = $instance->fetch();
+    $entryTxt = recursiveToString($entry->withoutTags());
+    sendMessage( $entryTxt );
+}
+
+function sendJftLanguageOptions($languages) {
+    $quickReplies = [];
+    foreach ($languages as $language) {
+        $quickReplies[] = [
+            "content_type" => "text",
+            "title" => ucfirst($language),
+            "payload" => strtolower($language)
+        ];
+    }
+
+    sendBotResponse([
+        'recipient' => ['id' => $GLOBALS['senderId']],
+        'messaging_type' => 'RESPONSE',
+        'message' => [
+            'text' => 'Please select a language:',
+            'quick_replies' => $quickReplies
+        ]
+    ]);
+}
+
+function recursiveToString($value) {
+    if (is_array($value)) {
+        $result = '';
+        foreach ($value as $item) {
+            $result .= recursiveToString($item);
+        }
+        return $result;
+    } else {
+        return $value . "\n\n";
+    }
 }
