@@ -1,3 +1,8 @@
 .idea
+.vscode/*
+.DS_Store
+logs/
+build/
+*.zip
 config.php.dev
 vendor/

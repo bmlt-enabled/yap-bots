@@ -1,0 +1,52 @@
+name: 'release'
+
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code 🛒
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 🐫
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+
+      - name: PHPCS checker 🧹
+        id: php-codesniffer
+        run: make lint
+
+  package:
+    runs-on: ubuntu-22.04
+    env:
+      BUILD_DIR: "build"
+      PRODUCT: "yap-bots"
+    needs: [ lint ]
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code 🛒
+        uses: actions/checkout@v4
+
+      - name: Build package 🔧
+        id: build-package
+        run: |
+          export ZIP_FILENAME=${PRODUCT}-${GITHUB_REF##*/}.zip
+          echo ${GITHUB_SHA} > build.txt
+          PROD=1 make build
+          zip $BUILD_DIR/$ZIP_FILENAME build.txt
+          echo "ARTIFACT_PATH=$BUILD_DIR/$ZIP_FILENAME" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${ZIP_FILENAME}" >> $GITHUB_ENV
+          RELEASE_TYPE=$(if [[ "$GITHUB_REF_NAME" =~ "beta" ]]; then echo "true"; else echo "false"; fi)
+          echo "RELEASE_TYPE=${RELEASE_TYPE}" >> $GITHUB_ENV
+
+      - name: Create Release 🎉
+        uses: ncipollo/release-action@v1.13.0
+        if: github.ref_type == 'tag'
+        with:
+          artifacts: ${{ env.ARTIFACT_PATH }}
+          prerelease: ${{ env.RELEASE_TYPE }}
