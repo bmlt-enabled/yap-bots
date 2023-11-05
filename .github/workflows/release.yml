@@ -5,22 +5,7 @@ on:
     tags: [ '*' ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code 🛒
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 🐫
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-
-      - name: PHPCS checker 🧹
-        id: php-codesniffer
-        run: make lint
-
-  package:
+  release:
     runs-on: ubuntu-22.04
     env:
       BUILD_DIR: "build"
@@ -41,6 +26,13 @@ jobs:
           zip $BUILD_DIR/$ZIP_FILENAME build.txt
           echo "ARTIFACT_PATH=$BUILD_DIR/$ZIP_FILENAME" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${ZIP_FILENAME}" >> $GITHUB_ENV
+
+      - name: Generate Release Notes 📝
+        if: github.ref_type == 'tag'
+        run: |
+          curl -LO https://raw.githubusercontent.com/bmlt-enabled/release-notes-tool/master/gh-release-notes.sh
+          chmod +x gh-release-notes.sh
+          ./gh-release-notes.sh CHANGELOG.md "##"
           RELEASE_TYPE=$(if [[ "$GITHUB_REF_NAME" =~ "beta" ]]; then echo "true"; else echo "false"; fi)
           echo "RELEASE_TYPE=${RELEASE_TYPE}" >> $GITHUB_ENV
 
@@ -49,4 +41,5 @@ jobs:
         if: github.ref_type == 'tag'
         with:
           artifacts: ${{ env.ARTIFACT_PATH }}
+          bodyFile: "changelog.txt"
           prerelease: ${{ env.RELEASE_TYPE }}
