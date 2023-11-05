@@ -1,6 +1,12 @@
-## 1.5.0 (UNRELEASED)
+## 1.7.0 (UNRELEASED)
 * Added multilingual JFT.
 * Added SPAD.
+
+## 1.6.0 (March 24, 2020)
+* Updated help messaging for virtual meeting support.
+
+## 1.5.0 (March 16, 2020)
+* Added virtual meeting support.
 
 ## 1.4.0 (December 28, 2019)
 * Moved state store to MySQL
