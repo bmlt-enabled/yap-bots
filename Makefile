@@ -32,11 +32,8 @@ clean:  ## clean
 	rm -rf build
 
 .PHONY: simulate
-simulate: redis  ## Simulate
-	ngrok http 3200
-
-redis:
-	docker run -d -p 6379:6379 redis
+simulate: dev  ## Simulate
+	ngrok http 8005
 
 .PHONY: fmt
 fmt: composer ## PHP Format
@@ -45,3 +42,7 @@ fmt: composer ## PHP Format
 .PHONY: lint
 lint: composer ## PHP Lint
 	vendor/squizlabs/php_codesniffer/bin/phpcs
+
+.PHONY: dev
+dev:  ## Docker up
+	docker-compose up
