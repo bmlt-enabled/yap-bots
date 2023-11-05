@@ -65,7 +65,10 @@ if (isset($messaging['postback']['payload'])
     $instance = SPAD::getInstance($settings);
     $entry = $instance->fetch();
     $entryTxt = recursiveToString($entry->withoutTags());
-    sendMessage( $entryTxt );
+    $messageChunks = splitMessage($entryTxt, 2000);
+    foreach ($messageChunks as $chunk) {
+        sendMessage($chunk);
+    }
 } elseif (isset($messageText)
           && strtoupper($messageText) == "MORE RESULTS") {
     $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
@@ -243,7 +246,10 @@ function handleJFtLanguageSelection($jftLanguages, $selectedLanguage) {
     $instance = JFT::getInstance($settings);
     $entry = $instance->fetch();
     $entryTxt = recursiveToString($entry->withoutTags());
-    sendMessage( $entryTxt );
+    $messageChunks = splitMessage($entryTxt, 2000);
+    foreach ($messageChunks as $chunk) {
+        sendMessage($chunk);
+    }
 }
 
 function sendJftLanguageOptions($languages) {
@@ -276,4 +282,31 @@ function recursiveToString($value) {
     } else {
         return $value . "\n\n";
     }
+}
+
+// Don't split in middle of word
+function splitMessage($message, $limit) {
+    $messageChunks = [];
+    $currentChunk = '';
+    $words = explode(' ', $message);
+
+    foreach ($words as $word) {
+        $wordLength = strlen($word);
+
+        if (strlen($currentChunk) + $wordLength + 1 <= $limit) {
+            // add word and space to current chunk
+            $currentChunk .= ($currentChunk ? ' ' : '') . $word;
+        } else {
+            // save current chunk and start new one
+            $messageChunks[] = $currentChunk;
+            $currentChunk = $word;
+        }
+    }
+
+    // add last chunk, if any
+    if (!empty($currentChunk)) {
+        $messageChunks[] = $currentChunk;
+    }
+
+    return $messageChunks;
 }
