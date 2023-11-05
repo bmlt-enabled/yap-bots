@@ -1,4 +1,5 @@
 <?php
+
 include_once 'config.php';
 include_once 'database.php';
 static $days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -6,13 +7,15 @@ $google_maps_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?key="
 $timezone_lookup_endpoint = "https://maps.googleapis.com/maps/api/timezone/json?key=" . trim($ss_google_maps_api_key);
 static $state_expiry_seconds = 1200;
 
-class Coordinates {
+class Coordinates
+{
     public $location;
     public $latitude;
     public $longitude;
 }
 
-class DataOutputType {
+class DataOutputType
+{
     const JSON = "json";
     const JSONP = "jsonp";
     const KML = "kml";
@@ -26,7 +29,8 @@ class StateDataType
     const LOCATION = "location";
 }
 
-function getState($senderId, $type) {
+function getState($senderId, $type)
+{
     $db = new Database();
     $db->query(sprintf("SELECT data, timestampdiff(SECOND, timestamp, current_timestamp) as timediff FROM state_%s where senderId = :senderId and timestampdiff(SECOND, timestamp, current_timestamp) <= %s ORDER BY timestamp DESC LIMIT 1;", $type, $GLOBALS['state_expiry_seconds']));
     $db->bind(':senderId', $senderId);
@@ -35,7 +39,8 @@ function getState($senderId, $type) {
     return $resultset['data'];
 }
 
-function setState($senderId, $type, $data) {
+function setState($senderId, $type, $data)
+{
     $db = new Database();
     $stmt = sprintf("INSERT INTO `state_%s` (`senderId`,`data`,`timestamp`) VALUES (:senderId, :data, :timestamp)", $type);
     $db->query($stmt);
@@ -47,31 +52,36 @@ function setState($senderId, $type, $data) {
     $db->close();
 }
 
-function getResultsString($filtered_list) {
+function getResultsString($filtered_list)
+{
     $additional_info_array = [];
 
     if ($GLOBALS['virtual']) {
         $additional_info = str_replace("tel:", "", str_replace(" ", "", $filtered_list->comments));
     } else {
-        if ($filtered_list->location_text != "") array_push($additional_info_array, $filtered_list->location_text);
-        if ($filtered_list->location_info != "") array_push($additional_info_array, $filtered_list->location_info);
+        if ($filtered_list->location_text != "") {
+            $additional_info_array[] = $filtered_list->location_text;
+        }
+        if ($filtered_list->location_info != "") {
+            $additional_info_array[] = $filtered_list->location_info;
+        }
         $additional_info = trim(implode(" / ", $additional_info_array));
     }
 
     $response = [];
 
-    array_push($response, str_replace("&", "&amp;", $filtered_list->meeting_name));
-    array_push($response, str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
-                                  . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A T')));
+    $response[] = str_replace("&", "&amp;", $filtered_list->meeting_name);
+    $response[] = str_replace("&", "&amp;", $GLOBALS['days_of_the_week'][$filtered_list->weekday_tinyint]
+        . ' ' . (new DateTime($filtered_list->start_time))->format('g:i A T'));
 
     if ($additional_info != null) {
-        array_push($response, $additional_info);
+        $response[] = $additional_info;
     }
 
     if (!$GLOBALS['virtual']) {
-        array_push($response, str_replace("&", "&amp;", $filtered_list->location_street
+        $response[] = str_replace("&", "&amp;", $filtered_list->location_street
             . ($filtered_list->location_municipality !== "" ? " " . $filtered_list->location_municipality : "")
-            . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : "")));
+            . ($filtered_list->location_province !== "" ? ", " . $filtered_list->location_province : ""));
     }
 
     return $response;
@@ -89,16 +99,21 @@ function setTimeZoneForLatitudeAndLongitude($latitude, $longitude)
     date_default_timezone_set($time_zone_results->timeZoneId);
 }
 
-function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
+function getMeetingResults($coordinates, $settings = null, $results_start = 0)
+{
     setTimeZoneForLatitudeAndLongitude($coordinates->latitude, $coordinates->longitude);
     try {
-        $results_count = (isset($GLOBALS['result_count_max']) ? $GLOBALS['result_count_max'] : 10) + $results_start;
+        $results_count = ($GLOBALS['result_count_max'] ?? 10) + $results_start;
 
         $today = null;
         $tomorrow = null;
         if ($settings != null) {
-            if ($today == null) $today = (new DateTime($settings->set_day))->format('w') + 1;
-            if ($tomorrow == null) $tomorrow = (new DateTime($settings->set_day))->modify('+1 day')->format('w') + 1;
+            if ($today == null) {
+                $today = (new DateTime($settings->set_day))->format('w') + 1;
+            }
+            if ($tomorrow == null) {
+                $tomorrow = (new DateTime($settings->set_day))->modify('+1 day')->format('w') + 1;
+            }
         }
 
         $meeting_results = getMeetings($coordinates->latitude, $coordinates->longitude, $results_count, $today, $tomorrow);
@@ -116,19 +131,20 @@ function getMeetingResults($coordinates, $settings = null, $results_start = 0) {
 
         $message = implode("\n", $results) . (!$GLOBALS['virtual'] ? "\n" . $distance_string : "");
 
-        array_push($data, [
+        $data[] = [
             "latitude" => $filtered_list[$i]->latitude,
             "longitude" => $filtered_list[$i]->longitude,
             "distance" => $distance_string,
             "distance_in_miles" => $filtered_list[$i]->distance_in_miles,
             "raw_data" => $results,
-            "message" => $message]);
+            "message" => $message];
     }
 
     return $data;
 }
 
-function getCoordinatesForAddress($address) {
+function getCoordinatesForAddress($address)
+{
     $coordinates = new Coordinates();
 
     if (strlen($address) > 0) {
@@ -148,24 +164,36 @@ function getCoordinatesForAddress($address) {
     return $coordinates;
 }
 
-function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow) {
+function getMeetings($latitude, $longitude, $results_count, $today, $tomorrow)
+{
     return json_decode(get(getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow)));
 }
 
-function getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow, $format = DataOutputType::JSON) {
-    return sprintf("%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s&format=%s",
-        ($GLOBALS['virtual'] ? "https://vphone.bmltenabled.org" : $GLOBALS['yap_url']),  $latitude, $longitude, $results_count, $today, $tomorrow, $format);
+function getMeetingsUrl($latitude, $longitude, $results_count, $today, $tomorrow, $format = DataOutputType::JSON)
+{
+    return sprintf(
+        "%s/api/getMeetings.php?latitude=%s&longitude=%s&results_count=%s&today=%s&tomorrow=%s&format=%s",
+        ($GLOBALS['virtual'] ? "https://vphone.bmltenabled.org" : $GLOBALS['yap_url']),
+        $latitude,
+        $longitude,
+        $results_count,
+        $today,
+        $tomorrow,
+        $format
+    );
 }
 
-function getServiceBodyCoverage($latitude, $longitude) {
-    return json_decode(get(sprintf("%s/api/getServiceBodyCoverage.php?latitude=%s&longitude=%s", $GLOBALS['yap_url'],  $latitude, $longitude)));
+function getServiceBodyCoverage($latitude, $longitude)
+{
+    return json_decode(get(sprintf("%s/api/getServiceBodyCoverage.php?latitude=%s&longitude=%s", $GLOBALS['yap_url'], $latitude, $longitude)));
 }
 
-function get($url) {
+function get($url)
+{
     error_log($url);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap' );
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $data = curl_exec($ch);
     $errorno = curl_errno($ch);
@@ -177,7 +205,8 @@ function get($url) {
     return $data;
 }
 
-function post($url, $payload, $is_json = true) {
+function post($url, $payload, $is_json = true)
+{
     error_log($url);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -188,7 +217,7 @@ function post($url, $payload, $is_json = true) {
     if ($is_json) {
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     }
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap" );
+    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +yap");
     $data = curl_exec($ch);
     error_Log($data);
     $errorno = curl_errno($ch);
@@ -197,4 +226,46 @@ function post($url, $payload, $is_json = true) {
         throw new Exception(curl_strerror($errorno));
     }
     return $data;
+}
+
+
+function recursiveToString($value)
+{
+    if (is_array($value)) {
+        $result = '';
+        foreach ($value as $item) {
+            $result .= recursiveToString($item);
+        }
+        return $result;
+    } else {
+        return $value . "\n\n";
+    }
+}
+
+// Don't split in middle of word
+function splitMessage($message, $limit)
+{
+    $messageChunks = [];
+    $currentChunk = '';
+    $words = explode(' ', $message);
+
+    foreach ($words as $word) {
+        $wordLength = strlen($word);
+
+        if (strlen($currentChunk) + $wordLength + 1 <= $limit) {
+            // add word and space to current chunk
+            $currentChunk .= ($currentChunk ? ' ' : '') . $word;
+        } else {
+            // save current chunk and start new one
+            $messageChunks[] = $currentChunk;
+            $currentChunk = $word;
+        }
+    }
+
+    // add last chunk, if any
+    if (!empty($currentChunk)) {
+        $messageChunks[] = $currentChunk;
+    }
+
+    return $messageChunks;
 }

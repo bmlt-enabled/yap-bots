@@ -31,27 +31,27 @@ include_once 'functions.php';?>
 
         <?php
             $data_points = json_decode(base64_decode($_REQUEST['Data']));
-            foreach ($data_points as $data_point) {
-                $label = "";
-                $row = 1;
+        foreach ($data_points as $data_point) {
+            $label = "";
+            $row = 1;
 
-                foreach ($data_point->raw_data as $result) {
-                    if ($row == 1) {
-                        $label .= "<b>" . $result . "</b><br/>";
-                    } else {
-                        $label .= $result . "<br/>";
-                    }
-
-                    $row++;
+            foreach ($data_point->raw_data as $result) {
+                if ($row == 1) {
+                    $label .= "<b>" . $result . "</b><br/>";
+                } else {
+                    $label .= $result . "<br/>";
                 }
-                $label .= $data_point->distance . "<br/>";
-                $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
-                ?>
+
+                $row++;
+            }
+            $label .= $data_point->distance . "<br/>";
+            $label .= "<a href='https://google.com/maps?q=" . $data_point->latitude . "," . $data_point->longitude . "'>Open</a>"
+            ?>
 
                 addMarker({lat: <?php echo $data_point->latitude?>, lng: <?php echo $data_point->longitude?>}, map, "<?php echo $label?>", "red");
                 locations.push(new google.maps.LatLng(<?php echo $data_point->latitude?>, <?php echo $data_point->longitude?>));
-        <?php
-            }
+            <?php
+        }
         ?>
 
         addMarker(mylocation, map, "You Are Here", "blue");

@@ -1,4 +1,5 @@
 <?php
+
 static $title = "";
 static $cs_google_maps_api_key = "";
 static $ss_google_maps_api_key = "";

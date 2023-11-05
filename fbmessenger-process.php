@@ -16,20 +16,18 @@ $input = json_decode(file_get_contents('php://input'), true);
 error_log(json_encode($input));
 
 $messaging = $input['entry'][0]['messaging'][0];
+
 if (isset($messaging['message']['attachments'])) {
     $messaging_attachment_payload = $messaging['message']['attachments'][0]['payload'];
 }
+
 $senderId  = $messaging['sender']['id'];
-if (isset($messaging['message']['text']) && $messaging['message']['text'] !== null) {
+if (isset($messaging['message']['text'])) {
     $messageText = $messaging['message']['text'];
     $GLOBALS['virtual'] = strpos(strtolower($messageText), "vm") === 0;
     $messageText = ltrim(preg_replace("/(vm)(.*)/", "$2", strtolower($messageText)));
     $coordinates = getCoordinatesForAddress($messageText);
-} /*elseif (isset($messaging_attachment_payload) && $messaging_attachment_payload !== null) {
-    $coordinates = new Coordinates();
-    $coordinates->latitude = $messaging_attachment_payload['coordinates']['lat'];
-    $coordinates->longitude = $messaging_attachment_payload['coordinates']['long'];
-}*/
+}
 
 $payload = null;
 $answer = "";
@@ -47,20 +45,25 @@ $jftLanguages = [
 
 $settings = json_decode(getState($messaging['sender']['id'], StateDataType::DAY));
 
-if (isset($messaging['postback']['payload'])
-    && $messaging['postback']['payload'] == "get_started") {
+if (
+    isset($messaging['postback']['payload'])
+    && $messaging['postback']['payload'] == "get_started"
+) {
     sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  (Note: Distances, unless a precise location, will be estimates.)");
     sendMessage("By default, results for today will show up.  You can adjust this setting using the menu below.");
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
-} elseif ((isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
-        && $messaging['postback']['payload'] == "JFT"))) {
+} elseif (
+    (isset($messageText) && strtoupper($messageText) == "JFT") || ((isset($messaging['postback']['payload'])
+        && $messaging['postback']['payload'] == "JFT"))
+) {
     sendJftLanguageOptions(array_keys($jftLanguages));
 } elseif (isset($messaging['message']['quick_reply']['payload']) && in_array(strtolower($messaging['message']['quick_reply']['payload']), array_keys($jftLanguages))) {
     $language = strtolower($messaging['message']['quick_reply']['payload']);
     handleJftLanguageSelection($jftLanguages, strtolower($language));
-} elseif ((isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
-        && $messaging['postback']['payload'] == "SPAD"))) {
-
+} elseif (
+    (isset($messageText) && strtoupper($messageText) == "SPAD") || ((isset($messaging['postback']['payload'])
+        && $messaging['postback']['payload'] == "SPAD"))
+) {
     $settings = new SPADSettings(SPADLanguage::English);
     $instance = SPAD::getInstance($settings);
     $entry = $instance->fetch();
@@ -69,9 +72,11 @@ if (isset($messaging['postback']['payload'])
     foreach ($messageChunks as $chunk) {
         sendMessage($chunk);
     }
-} elseif (isset($messageText)
-          && strtoupper($messageText) == "MORE RESULTS") {
-    $payload = json_decode( $messaging['message']['quick_reply']['payload'] );
+} elseif (
+    isset($messageText)
+          && strtoupper($messageText) == "MORE RESULTS"
+) {
+    $payload = json_decode($messaging['message']['quick_reply']['payload']);
     sendMeetingResults($payload->coordinates, getMeetingResults($payload->coordinates, $settings, $payload->results_start));
 } elseif (isset($messaging['postback']['payload'])) {
     $payload = json_decode($messaging['postback']['payload']);
@@ -85,7 +90,7 @@ if (isset($messaging['postback']['payload'])
         sendMessage('The day has been set to ' . $payload->set_day . ".  This setting will reset to lookup Today's meetings in 5 minutes.  Enter a City, County or Zip Code.");
     }
 } elseif (isset($messageText) && strtoupper($messageText) == "THANK YOU") {
-    sendMessage( ":)" );
+    sendMessage(":)");
 } elseif (isset($messageText) && strtoupper($messageText) == "HELP") {
     sendMessage($GLOBALS['title'] . ".  You can search for meetings by entering a City, County or Postal Code, or even a Full Address.  (Note: Distances, unless a precise location, will be estimates.)");
     sendMessage("If you start your search with `vm` and then location it will return virtual meetings displayed in your local timezone.  Example: vm Asheboro, NC");
@@ -93,7 +98,7 @@ if (isset($messaging['postback']['payload'])
     sendMessage("Recently Facebook removed the Quick Location button.  We are searching for an alternative approach to make your search experience better.");
     sendMessage("Not finding results close by?  It's likely that your community is not yet covered by the BMLT (https://doihavethebmlt.org).  Send an email to help@bmlt.app to find out how to get the BMLT in your community.");
 } elseif (isset($messageText) && strtoupper($messageText) == "📞 HELPLINE") {
-    $coordinates = json_decode( $messaging['message']['quick_reply']['payload'] )->coordinates;
+    $coordinates = json_decode($messaging['message']['quick_reply']['payload'])->coordinates;
     if ($coordinates != null) {
         sendServiceBodyCoverage($coordinates);
     } else {
@@ -104,7 +109,8 @@ if (isset($messaging['postback']['payload'])
     setState($senderId, StateDataType::LOCATION, json_encode($coordinates));
 }
 
-function sendServiceBodyCoverage($coordinates) {
+function sendServiceBodyCoverage($coordinates)
+{
     $service_body = getServiceBodyCoverage($coordinates->latitude, $coordinates->longitude);
     if ($service_body != null) {
         sendMessage("Covered by: " . $service_body->name . ", their phone number is: " . explode("|", $service_body->helpline)[0], $coordinates);
@@ -113,7 +119,8 @@ function sendServiceBodyCoverage($coordinates) {
     }
 }
 
-function getSavedCoordinates($sender_id) {
+function getSavedCoordinates($sender_id)
+{
     $location = getState($sender_id, StateDataType::LOCATION);
     if ($location != null) {
         return json_decode($location);
@@ -122,24 +129,28 @@ function getSavedCoordinates($sender_id) {
     }
 }
 
-function doIHaveTheBMLTChecker($results) {
+function doIHaveTheBMLTChecker($results)
+{
     return round($results[0]['distance_in_miles']) < 100;
 }
 
-function sendMeetingResults($coordinates, $results) {
+function sendMeetingResults($coordinates, $results)
+{
     if ($coordinates->latitude !== null && $coordinates->longitude !== null) {
         $map_payload = [];
         for ($i = 0; $i < count($results); $i++) {
-            sendMessage($results[$i]['message'],
+            sendMessage(
+                $results[$i]['message'],
                 $coordinates,
-                count($results));
+                count($results)
+            );
 
-            array_push($map_payload, [
+            $map_payload[] = [
                 "latitude" => $results[$i]['latitude'],
                 "longitude" => $results[$i]['longitude'],
                 "distance" => $results[$i]['distance'],
                 "raw_data" => $results[$i]['raw_data']
-            ]);
+            ];
         }
 
         $map_page_url = "https://"
@@ -159,8 +170,9 @@ function sendMeetingResults($coordinates, $results) {
     }
 }
 
-function sendMessage($message, $coordinates = null, $results_count = 0  ) {
-    $quick_replies_payload = quickReplies( $coordinates, $results_count );
+function sendMessage($message, $coordinates = null, $results_count = 0)
+{
+    $quick_replies_payload = quickReplies($coordinates, $results_count);
 
     sendBotResponse([
         'recipient' => ['id' => $GLOBALS['senderId']],
@@ -172,8 +184,9 @@ function sendMessage($message, $coordinates = null, $results_count = 0  ) {
     ]);
 }
 
-function sendButton($title, $button_title, $link, $coordinates = null, $results_count = 0  ) {
-    $quick_replies_payload = quickReplies( $coordinates, $results_count );
+function sendButton($title, $button_title, $link, $coordinates = null, $results_count = 0)
+{
+    $quick_replies_payload = quickReplies($coordinates, $results_count);
 
     sendBotResponse([
         'recipient' => ['id' => $GLOBALS['senderId']],
@@ -200,47 +213,47 @@ function sendButton($title, $button_title, $link, $coordinates = null, $results_
     ]);
 }
 
-function quickReplies( $coordinates, $results_count ) {
+function quickReplies($coordinates, $results_count)
+{
     $quick_replies_payload = array();
 
-    if ( isset( $coordinates ) ) {
-        array_push( $quick_replies_payload,
-            [
-                'content_type' => 'text',
-                'title'        => '📞 Helpline',
-                'payload'      => json_encode( [
-                    'coordinates' => $coordinates
-                ] )
-            ] );
-    }
-
-    if ( $results_count > 0 ) {
-        array_push( $quick_replies_payload,
-            [
-                'content_type' => 'text',
-                'title'        => 'More Results',
-                'payload'      => json_encode( [
-                    'results_start' => $results_count + 1,
-                    'coordinates'   => $coordinates
-                ] )
-            ] );
-    }
-
-    array_push( $quick_replies_payload,
-        [
+    if (isset($coordinates)) {
+        $quick_replies_payload[] = [
             'content_type' => 'text',
-            'title'        => 'Help',
-            'payload'      => 'help'
-        ]);
+            'title' => '📞 Helpline',
+            'payload' => json_encode([
+                'coordinates' => $coordinates
+            ])
+        ];
+    }
+
+    if ($results_count > 0) {
+        $quick_replies_payload[] = [
+            'content_type' => 'text',
+            'title' => 'More Results',
+            'payload' => json_encode([
+                'results_start' => $results_count + 1,
+                'coordinates' => $coordinates
+            ])
+        ];
+    }
+
+    $quick_replies_payload[] = [
+        'content_type' => 'text',
+        'title' => 'Help',
+        'payload' => 'help'
+    ];
 
     return $quick_replies_payload;
 }
 
-function sendBotResponse($payload) {
+function sendBotResponse($payload)
+{
     post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
 }
 
-function handleJFtLanguageSelection($jftLanguages, $selectedLanguage) {
+function handleJFtLanguageSelection($jftLanguages, $selectedLanguage)
+{
     $selectedLanguage = $jftLanguages[$selectedLanguage] ?? JFTLanguage::English;
     $settings = new JFTSettings($selectedLanguage);
     $instance = JFT::getInstance($settings);
@@ -252,7 +265,8 @@ function handleJFtLanguageSelection($jftLanguages, $selectedLanguage) {
     }
 }
 
-function sendJftLanguageOptions($languages) {
+function sendJftLanguageOptions($languages)
+{
     $quickReplies = [];
     foreach ($languages as $language) {
         $quickReplies[] = [
@@ -270,43 +284,4 @@ function sendJftLanguageOptions($languages) {
             'quick_replies' => $quickReplies
         ]
     ]);
-}
-
-function recursiveToString($value) {
-    if (is_array($value)) {
-        $result = '';
-        foreach ($value as $item) {
-            $result .= recursiveToString($item);
-        }
-        return $result;
-    } else {
-        return $value . "\n\n";
-    }
-}
-
-// Don't split in middle of word
-function splitMessage($message, $limit) {
-    $messageChunks = [];
-    $currentChunk = '';
-    $words = explode(' ', $message);
-
-    foreach ($words as $word) {
-        $wordLength = strlen($word);
-
-        if (strlen($currentChunk) + $wordLength + 1 <= $limit) {
-            // add word and space to current chunk
-            $currentChunk .= ($currentChunk ? ' ' : '') . $word;
-        } else {
-            // save current chunk and start new one
-            $messageChunks[] = $currentChunk;
-            $currentChunk = $word;
-        }
-    }
-
-    // add last chunk, if any
-    if (!empty($currentChunk)) {
-        $messageChunks[] = $currentChunk;
-    }
-
-    return $messageChunks;
 }

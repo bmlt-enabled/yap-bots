@@ -1,4 +1,5 @@
 <?php
+
 // Define database configuration
 define("DB_HOST", $GLOBALS['mysql_hostname']);
 define("DB_USER", $GLOBALS['mysql_username']);
@@ -24,8 +25,7 @@ class Database
         );
         try {
             $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $this->error = $e->getMessage();
             throw $e;
         }

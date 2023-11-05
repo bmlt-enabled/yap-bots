@@ -8,15 +8,18 @@ services:
       - 8005:80
     volumes:
       - .:/var/www/html/
+      - ./logs/:/var/log/apache2
     environment:
       ENVIRONMENT: dev
   yap_bots_db:
-    image: mysql:5.5
+    image: mariadb:10.11
     restart: always
     ports:
       - 3116:3306
     environment:
-      MYSQL_ROOT_PASSWORD: yap_bots_root_password
-      MYSQL_DATABASE: yap_bots
-      MYSQL_USER: yap_bots_user
-      MYSQL_PASSWORD: yap_bots_password
+      MARIADB_ROOT_PASSWORD: yap_bots_root_password
+      MARIADB_DATABASE: yap_bots
+      MARIADB_USER: yap_bots_user
+      MARIADB_PASSWORD: yap_bots_password
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql
