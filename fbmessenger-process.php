@@ -249,7 +249,7 @@ function quickReplies($coordinates, $results_count)
 
 function sendBotResponse($payload)
 {
-    post('https://graph.facebook.com/v5.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
+    post('https://graph.facebook.com/v23.0/me/messages?access_token=' . $GLOBALS['fbmessenger_accesstoken'], $payload);
 }
 
 function handleJFtLanguageSelection($jftLanguages, $selectedLanguage)

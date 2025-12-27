@@ -1,4 +1,7 @@
-## 1.7.0 (UNRELEASED)
+## 1.7.1 (December 26, 2025)
+* Forced IPv4 resolution for Google Maps API
+
+## 1.7.0 (November 5, 2023)
 * Added multilingual JFT.
 * Added SPAD.
 
