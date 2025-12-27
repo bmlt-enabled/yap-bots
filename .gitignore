@@ -6,3 +6,4 @@ build/
 *.zip
 config.php.dev
 vendor/
+config.php

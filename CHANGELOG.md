@@ -1,3 +1,7 @@
+## 1.7.2 (December 27, 2025)
+* Added query map for historical data displays.
+* Added database port configuration.
+
 ## 1.7.1 (December 26, 2025)
 * Forced IPv4 resolution for Google Maps API
 

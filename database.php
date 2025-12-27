@@ -2,6 +2,7 @@
 
 // Define database configuration
 define("DB_HOST", $GLOBALS['mysql_hostname']);
+define("DB_PORT", $GLOBALS['mysql_port'] ?? 3306);
 define("DB_USER", $GLOBALS['mysql_username']);
 define("DB_PASS", $GLOBALS['mysql_password']);
 define("DB_NAME", $GLOBALS['mysql_database']);
@@ -9,6 +10,7 @@ define("DB_NAME", $GLOBALS['mysql_database']);
 class Database
 {
     private $host      = DB_HOST;
+    private $port      = DB_PORT;
     private $user      = DB_USER;
     private $pass      = DB_PASS;
     private $dbname    = DB_NAME;
@@ -18,7 +20,7 @@ class Database
 
     public function __construct()
     {
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+        $dsn = 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->dbname;
         $options = array(
             PDO::ATTR_PERSISTENT    => true,
             PDO::ATTR_ERRMODE       => PDO::ERRMODE_EXCEPTION

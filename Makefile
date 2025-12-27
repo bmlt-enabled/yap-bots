@@ -46,3 +46,7 @@ lint: composer ## PHP Lint
 .PHONY: dev
 dev:  ## Docker up
 	docker-compose up
+
+.PHONY: serve
+serve:
+	php -S localhost:8081
